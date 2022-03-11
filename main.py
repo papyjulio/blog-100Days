@@ -8,6 +8,7 @@ from sqlalchemy.orm import relationship
 from flask_login import UserMixin, login_user, LoginManager, login_required, current_user, logout_user
 from flask_gravatar import Gravatar
 from functools import wraps
+import os
 
 # import des formulaires depuis forms.py et config.py
 from forms import CreatePostForm, CreateRegisterForm, CreateLoginForm, CreateCommentForm
@@ -17,15 +18,15 @@ from config import salt_length, hash_method
 ####################################### INITIALISATION DE APP ##############################################################
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = os.environ.get("SECRET_KEY")
 ckeditor = CKEditor(app)
 Bootstrap(app)
 ##Initialisation de LoginManager
 login_manager = LoginManager()
 login_manager.init_app(app)
 #######################################################################################################################
-####################################### CONNECT TO DB ##############################################################
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///blog.db'
+####################################### CONNECT TO DB (AVEC OS SUR HEROKU ET SINON SQLITE EN LOCAL  ###################
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL",  "sqlite:///blog.db")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
